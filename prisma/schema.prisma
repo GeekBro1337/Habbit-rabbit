@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int         @id @default(autoincrement())
+  username  String      @unique  // Имя (логин) пользователя, уникальный
+  age       Int?
+  gender    String?
+  habits    Habit[]     // Привычки пользователя
+  sharedHabits SharedHabit[] // Задачи, расшаренные для пользователя
+  rating    UserRating?
+  auth      Auth?       // Связь с Auth
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model Auth {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique    // Email (логин-почта)
+  password  String               // Хешированный пароль
+  pinCode   String?              // Пин-код (опционально)
+  userId    Int      @unique     // Поле для связи 1:1 с User
+
+  // Создаем связь с User:
+  user      User     @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Пример связанной таблицы (Привычки/Задачи):
+
+model Habit {
+  id           Int         @id @default(autoincrement())
+  user         User        @relation(fields: [userId], references: [id])  // Автор задачи
+  userId       Int
+  sharedWith   SharedHabit[]  // Связанные пользователи (shared-задачи)
+  title        String
+  description  String?
+  createdAt    DateTime    @default(now())
+  reminderTime DateTime?
+  habitType    HabitType
+  rating       Int
+  color        String?
+  status       HabitStatus
+  visibility   HabitVisibility @default(PRIVATE)
+  updatedAt    DateTime    @updatedAt
+}
+
+model SharedHabit {
+  id      Int   @id @default(autoincrement())
+  habit   Habit @relation(fields: [habitId], references: [id])
+  habitId Int
+  user    User  @relation(fields: [userId], references: [id])
+  userId  Int
+
+  @@unique([habitId, userId]) // Композитный уникальный ключ
+}
+
+enum HabitVisibility {
+  PRIVATE   // Только владелец видит задачу
+  PUBLIC    // Все пользователи могут видеть
+  SHARED    // Задача доступна для списка пользователей
+}
+
+
+model UserRating {
+  id                Int    @id @default(autoincrement())
+  user              User   @relation(fields: [userId], references: [id])
+  userId            Int    @unique
+  averageTaskRating Float
+  completedTasks    Int
+  notCompletedTasks Int
+  inProgressTasks   Int
+}
+
+enum HabitType {
+  DAILY
+  WEEKLY
+  REGULAR
+  DESIRED_RESULT
+}
+
+enum HabitStatus {
+  DONE
+  NOT_DONE
+  IN_PROGRESS
+  ABANDONED
+}
