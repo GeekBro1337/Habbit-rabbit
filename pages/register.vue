@@ -47,8 +47,13 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
     alert('Регистрация успешна!')
 
-    // Перенаправляем пользователя на страницу входа
-    router.push('/login')
+    if (result.token) {
+      // Сохраняем токен и сразу авторизуем пользователя
+      localStorage.setItem('token', result.token)
+      router.push('/dashboard')
+    } else {
+      router.push('/login')
+    }
   } catch (error: any) {
     alert(`Ошибка: ${error.message}`)
   }
