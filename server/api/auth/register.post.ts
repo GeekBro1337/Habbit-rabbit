@@ -1,7 +1,9 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 const prisma = new PrismaClient()
+const JWT_SECRET = process.env.JWT_SECRET || 'secret'
 
 export default defineEventHandler(async (event) => {
   // Считываем данные из тела запроса
@@ -62,10 +64,15 @@ export default defineEventHandler(async (event) => {
       // пароля тут нет!
     }
 
+    const token = jwt.sign({ userId: newUser.id }, JWT_SECRET, {
+      expiresIn: '1h'
+    })
+
     // 5. Возвращаем успех
     return {
       message: 'Регистрация прошла успешно!',
-      user: userResponse
+      user: userResponse,
+      token
     }
 
   } catch (error: any) {
