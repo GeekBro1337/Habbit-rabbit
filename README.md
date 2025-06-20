@@ -73,3 +73,13 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## Docker
+
+This project includes a `docker-compose.yml` file to start the application with a PostgreSQL database. Copy `.env.example` to `.env` and then run:
+
+```bash
+docker-compose up --build
+```
+
+The app will be available on `http://localhost:3000`.

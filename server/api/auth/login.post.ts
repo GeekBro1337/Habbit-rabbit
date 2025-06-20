@@ -1,8 +1,10 @@
 // server/api/auth/login.post.ts
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 const prisma = new PrismaClient()
+const JWT_SECRET = process.env.JWT_SECRET || 'secret'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -33,9 +35,14 @@ export default defineEventHandler(async (event) => {
       email: authData.email
     }
 
+    const token = jwt.sign({ userId: authData.user.id }, JWT_SECRET, {
+      expiresIn: '1h'
+    })
+
     return {
       message: 'Вход выполнен успешно!',
-      user: userResponse
+      user: userResponse,
+      token
     }
   } catch (error: any) {
     throw createError({ statusCode: 500, message: error.message })
