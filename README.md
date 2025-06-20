@@ -76,10 +76,20 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 
 ## Docker
 
-This project includes a `docker-compose.yml` file to start the application with a PostgreSQL database. Copy `.env.example` to `.env` and then run:
+This project includes a `docker-compose.yml` file with two services: `db` (PostgreSQL) and `app`. Copy `.env.example` to `.env` and then run:
 
 ```bash
 docker-compose up --build
 ```
 
 The app will be available on `http://localhost:3000`.
+
+### Running only the database
+
+To start just the PostgreSQL service without the Nuxt app, run:
+
+```bash
+docker-compose up db
+```
+
+The database will listen on port `5432`.
