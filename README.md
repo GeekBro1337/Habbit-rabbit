@@ -73,3 +73,30 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## Docker
+
+This project includes a `docker-compose.yml` file with two services: `db` (PostgreSQL) and `app`. Copy `.env.example` to `.env`, adjust `JWT_SECRET` to any random string and then run:
+
+```bash
+docker-compose up --build
+```
+
+The app will be available on `http://localhost:3000`.
+
+After the containers start, run database migrations and seed data:
+
+```bash
+docker-compose exec app pnpm exec prisma migrate deploy
+docker-compose exec app pnpm run seed
+```
+
+### Running only the database
+
+To start just the PostgreSQL service without the Nuxt app, run:
+
+```bash
+docker-compose up db
+```
+
+The database will listen on port `5432`.

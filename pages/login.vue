@@ -21,8 +21,10 @@ async function handleLogin(userData: { email: string, password: string }) {
 
     alert('Вход выполнен успешно!')
 
-    // Здесь можно сохранить токен в localStorage / Vuex / Pinia
-    // localStorage.setItem('token', result.token)
+    // Сохраняем токен при наличии
+    if (result.token) {
+      localStorage.setItem('token', result.token)
+    }
 
     // Перенаправляем пользователя в личный кабинет
     router.push('/dashboard')
