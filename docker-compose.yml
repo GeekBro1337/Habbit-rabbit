@@ -1,0 +1,24 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: nuxt
+      POSTGRES_PASSWORD: nuxt
+      POSTGRES_DB: nuxtdb
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://nuxt:nuxt@db:5432/nuxtdb
+      JWT_SECRET: your_jwt_secret
+    depends_on:
+      - db
+volumes:
+  db-data:
